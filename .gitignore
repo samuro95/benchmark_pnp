@@ -17,3 +17,7 @@ benchopt.ini
 coverage.xml
 venv/
 data/
+datasets/set3c
+datasets/CBSD68
+*.png
+
