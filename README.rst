@@ -20,8 +20,8 @@ This benchmark can be run using the following commands:
 .. code-block::
 
    $ pip install -U benchopt
-   $ git clone https://github.com/tobias-liaudat/benchmark_sampling
-   $ benchopt run benchmark_sampling
+   $ git clone https://github.com/samuro95/benchmark_pnp
+   $ benchopt run benchmark_pnp
 
 Apart from the problem, options can be passed to ``benchopt run``, to restrict the benchmarks to some solvers or datasets, e.g.:
 
