@@ -9,6 +9,15 @@ def define_physics(inv_problem, noise_model, noise_level):
         physics = dinv.physics.Denoising(noise=noise)
     return physics
 
+def define_prior(name, denoiser):
+    if name == 'pnp':
+        prior = dinv.optim.prior.PnP(denoiser = choose_denoiser(self.denoiser_name))
+    elif name == 'red':
+        prior = dinv.optim.prior.RED(denoiser = choose_denoiser(self.denoiser_name))
+    elif name == 'score':
+        prior = dinv.optim.prior.ScorePrior(denoiser = choose_denoiser(self.denoiser_name))
+
+
 def choose_denoiser(name, imsize = (1, 64, 64)):
     if name == "unet":
         out = dinv.models.UNet(in_channels=imsize[0], out_channels=imsize[0])

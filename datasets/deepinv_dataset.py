@@ -22,7 +22,7 @@ class Dataset(BaseDataset):
     parameters = {
         'dataset_name': ["set3c"],
         'img_size': [64],
-        'batch_size': [1],
+        'batch_size': [3],
         'num_workers': [0],
         'shuffle': [False],
     }

@@ -9,7 +9,7 @@ class Objective(BaseObjective):
     name = "Optim PSNR"
 
     # URL of the main repo for this benchmark.
-    url = "https://github.com/samuro95/benchmark_"
+    url = "https://github.com/samuro95/benchmark_pnp"
 
     # List of parameters for the objective. The benchmark will consider
     # the cross product for each key in the dictionary.

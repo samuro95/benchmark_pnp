@@ -1,6 +1,6 @@
 from benchopt import BaseSolver, safe_import_context
 from benchopt.utils import profile
-from benchmark_utils.utils import choose_denoiser
+from benchmark_utils.utils import choose_denoiser, define_prior
 from benchopt.stopping_criterion import SingleRunCriterion
 
 # Protect the import with `safe_import_context()`. This allows:
@@ -9,6 +9,7 @@ from benchopt.stopping_criterion import SingleRunCriterion
 with safe_import_context() as import_ctx:
     import torch
     import deepinv as dinv 
+    import numpy as np
 
 
 # The benchmark solvers must be named `Solver` and
@@ -23,9 +24,10 @@ class Solver(BaseSolver):
     # All parameters 'p' defined here are available as 'self.p'.
     parameters = {
         'denoiser_name' : ['waveletdenoiser'],
-        'iteration' : ['HQS'],
+        'iteration' : ['HQS','PGD', 'DRS', 'ADMM', 'FISTA'],
+        'prior_name' : 'pnp',
         'sigma_denoiser' : [0.1],
-        'stepsize' : [1.],
+        'stepsize' : [0.1],
     }
 
     stopping_criterion = SingleRunCriterion()
@@ -37,7 +39,7 @@ class Solver(BaseSolver):
         # passing the objective to the solver.
         # It is customizable for each benchmark.
         self.physics = physics 
-        self.prior = dinv.optim.prior.PnP(denoiser = choose_denoiser(self.denoiser_name))
+        self.prior = define_prior(self.prior_name, choose_denoiser(self.denoiser_name))
         self.data_fidelity = dinv.optim.data_fidelity.L2()
         self.dataloader = dataloader
 
@@ -51,14 +53,13 @@ class Solver(BaseSolver):
             iteration=self.iteration,
             prior=self.prior,
             data_fidelity=self.data_fidelity,
-            early_stop=False,
-            max_iter=n_iter,
+            max_iter=100,
+            early_stop=True,
             verbose=False,
             params_algo={'g_param': self.sigma_denoiser, 'stepsize': self.stepsize}
         )
 
-
-        self.metric_avg, self.metric_std, _, _ = dinv.test(
+        self.psnr_avg, self.psnr_std, _, _ = dinv.test(
             model=model,
             test_dataloader=self.dataloader,
             online_measurements=True,
@@ -70,4 +71,4 @@ class Solver(BaseSolver):
         )
 
     def get_result(self):
-        return {'metric_avg' : self.metric_avg} 
+        return {'metric_avg' : self.psnr_avg} 
